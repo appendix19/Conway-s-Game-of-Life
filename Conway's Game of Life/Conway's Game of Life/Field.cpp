@@ -19,16 +19,34 @@ void Field::generateRandomPattern () {
 		cout << randomLiveCells [i] << endl;
 	}
 
-	//vector randomLiveCells sa prekonvertuje do vectoru pattern
-	for (int i = 0; i < y; i++) {
-		for (int j = 0; j < x; j++) {
-			
+	//vector randomLiveCells sa prekonvertuje do vector pattern
+	for (int i = 0; i < x*y; i++) {
+		if (randomLiveCells [i] == 1) {
+			this->pattern.push_back (i);			
 		}
 	}
+
+	//vypis pattern
+	cout << endl;
+	cout << "Prekonvertovany vector: " << endl;
+	for (int i = 0; i < pattern.size(); i++) {
+		cout << this->pattern[i] << endl;
+	}
+	
 }
 
-void Field::display() {
-	
+void Field::display () {
+	if (!this->pattern.empty ()) {
+		for (int i = 0; i < y; i++) {
+			for (int j = 0; j < x; j++) {
+				cout << 0 << ' ';
+			}
+			cout << endl;
+		}
+	}
+	else {
+
+	}
 }
 
 Field::~Field()
