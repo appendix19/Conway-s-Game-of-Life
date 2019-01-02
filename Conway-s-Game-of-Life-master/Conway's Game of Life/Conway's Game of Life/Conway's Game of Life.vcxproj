@@ -115,8 +115,8 @@
   </ItemDefinitionGroup>
   <ItemGroup>
     <ClInclude Include="..\..\Conway%27s Game of Life\Conway%27s Game of Life\Field.h" />
+    <ClInclude Include="Main.h" />
     <ClInclude Include="..\..\Conway%27s Game of Life\Conway%27s Game of Life\heap_monitor.h" />
-    <ClInclude Include="..\..\Conway%27s Game of Life\Conway%27s Game of Life\Main.h" />
   </ItemGroup>
   <ItemGroup>
     <ClCompile Include="..\..\Conway%27s Game of Life\Conway%27s Game of Life\Field.cpp" />

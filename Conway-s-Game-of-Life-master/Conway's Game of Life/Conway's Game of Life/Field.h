@@ -10,14 +10,19 @@ class Field
 {
 private:
 	vector <int> pattern; //vector zivych buniek, reprezentujuci sucasny vzor pola
-	int x;				  //pocet stlpcov
-	int y;			      //pocet riadkov
+	int x;				  //pocet riadkov
+	int y;			      //pocet stlpcov
 
 public:
-	void generateRandomPattern ();     //vytvorenie nahodneho vzoru
-	void nextGeneration();
-	void display ();                   //vypise momentalny stav pola
-	Field (int, int);                  //konstruktor pre vytvorenie prazdneho pola
+	void setX (int x);
+	void setY (int y);	
+	void clearPattern ();
+	void generateRandomPattern ();              //vytvorenie nahodneho vzoru
+	void nextGeneration();                      //dalsia iteracia
+	void display ();                            //vypise momentalny stav pola
+	void manualInsert();                        //rucne vkladanie zivych buniek
+	bool checkCell (int riadok, int stlpec);    //true ak bunka na zadanych suradniciach nie je ziva
+	Field (int, int);                           //konstruktor pre vytvorenie prazdneho pola
 	~Field ();
 };
 
