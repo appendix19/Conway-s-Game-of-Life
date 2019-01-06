@@ -3,22 +3,25 @@
 #include <algorithm>
 #include <windows.h>
 
+
 Field::Field (int x, int y)
 {
 	this->x = x;
 	this->y = y;
 	this->input = false;
-	this->pattern = new vector<int>();
+	this->pattern = new vector <int> ();
+	this->simulation = new vector <vector <int>*> ();
 }
 
 bool Field::isInVector(int riadok, int stlpec)
 {
 	int index;
-	if (stlpec != -1 || stlpec < x) {
-		index = riadok * x + stlpec;
-		return (std::find(pattern->begin(), pattern->end(), index) != pattern->end());
+	if (stlpec != -1 && stlpec < this->y) {	
+		if (riadok != -1 && riadok < this->x) {
+			index = riadok * x + stlpec;
+			return (std::find(pattern->begin(), pattern->end(), index) != pattern->end());
+		}		
 	}
-
 	return false;
 }
 
@@ -52,16 +55,14 @@ void Field::generateRandomPattern () {
 		if (randomLiveCells [i] == 1) {
 			this->pattern->push_back(i);
 		}
-	}
-	
+	}	
 }
 
 void Field::nextGeneration()
 {
 	vector <int> *newGenerationAliveCells = new vector <int>();
 	*newGenerationAliveCells = *pattern;
-
-
+	
 	if (!this->pattern->empty()) {
 		for (int i = 0; i < y; i++) {
 			for (int j = 0; j < x; j++) {
@@ -73,17 +74,18 @@ void Field::nextGeneration()
 
 				for (int k = -1; k < 2; k++) {
 					for (int l = -1; l < 2; l++) {
-
-						if (isInVector(i + k, j + l))
+						if (isInVector(i + k, j + l)) {
 							aliveNeighbours++;
+						}							
 					}
 				}
 
 				bool isCurrentCellAlive = isInVector(i, j);
 
 				//Odpoèítam samého seba
-				if (isCurrentCellAlive)
-				aliveNeighbours--;
+				if (isCurrentCellAlive) {
+					aliveNeighbours--;
+				}				
 
 				int indexCell = i * x + j;
 
@@ -173,7 +175,7 @@ void Field::manualInsert()
 
 }
 
-bool Field::checkCell(int riadok, int stlpec) {
+bool Field::checkCell (int riadok, int stlpec) {
 	int cell = this->y*(riadok - 1) + (stlpec - 1);
 	for (int i = 0; i < this->pattern->size(); i++) {
 		if (this->pattern->at(i) == cell) {
@@ -183,34 +185,60 @@ bool Field::checkCell(int riadok, int stlpec) {
 	return true;
 }
 
-void Field::simulation() {
-	thread first (&Field::run, this);
+void Field::forwardSimulation () {
+	thread first (&Field::runForward, this);
 	thread second (&Field::stop, this);
 
 	first.join();
 	second.join();	
 }
 
-void Field::run() {
+void Field::backwardSimulation () {
+	thread first (&Field::runBackward, this);
+	thread second (&Field::stop, this);
+
+	first.join();
+	second.join();
+}
+
+void Field::runBackward() {
+	while (!input) {
+		system("CLS");
+		this->display();		
+		if (this->simulation->empty()) {
+			this->input = true;
+			cout << "KONIEC" << endl;
+		}
+		else {
+			this->pattern = this->simulation->back();
+			this->simulation->pop_back();
+			Sleep (50);
+		}
+	}
+	this->input = false;
+}
+
+void Field::runForward () {
 	while (!input) {
 		system("CLS");
 		this->display();
-		this->nextGeneration();
-		Sleep(100);
+		if (!this->pattern->empty()) {			
+			this->simulation->push_back (this->pattern);
+		}
+		this->nextGeneration ();
+		Sleep (50);
 	}
 	this->input = false;	
 }
 
 void Field::stop () {
-	int a = 1;
-	cin >> a;
-	while (a != 0) {
-		cin >> a;
-	}
+	Sleep (30);
+	system ("pause");	
 	this->input = true;
 }
 
 Field::~Field()
 {
 	delete pattern;
+	delete simulation;
 }

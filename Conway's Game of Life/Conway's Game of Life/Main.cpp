@@ -5,7 +5,7 @@
 #include "Field.h"
 
 Main::Main()
-{	
+{
 }
 
 int main (int argc, char *argv[]) {
@@ -111,7 +111,7 @@ int main (int argc, char *argv[]) {
 			cout << "0.Main Menu" << endl;
 			cout << "***************************************** " << endl;
 			field->display();
-			cout << "***************************************** " << endl;			
+			cout << "***************************************** " << endl;					
 			cout << "Your input: ";
 			cin >> input;
 			message.clear();
@@ -119,8 +119,11 @@ int main (int argc, char *argv[]) {
 
 			switch (input) {
 			case 1: 
-				field->simulation ();
+				field->forwardSimulation ();				
 				break;
+			case 2:
+				field->backwardSimulation ();
+				break;			
 			case 0:
 				system("CLS");
 				break;
