@@ -1,10 +1,13 @@
 #include "Field.h"
+#include <thread>
 #include <algorithm>
+#include <windows.h>
 
 Field::Field (int x, int y)
 {
 	this->x = x;
 	this->y = y;
+	this->input = false;
 	this->pattern = new vector<int>();
 }
 
@@ -47,7 +50,7 @@ void Field::generateRandomPattern () {
 	//vector randomLiveCells sa prekonvertuje do vector pattern
 	for (int i = 0; i < x*y; i++) {
 		if (randomLiveCells [i] == 1) {
-			this->pattern->push_back (i);			
+			this->pattern->push_back(i);
 		}
 	}
 	
@@ -124,13 +127,13 @@ void Field::display () {
 
 			if (std::find(pattern->begin(), pattern->end(), index) != pattern->end())
 			{
-				cout << 1 << ' ';
+				printf (" o"); //live
 			}
 			else {
-				cout << 0 << ' ';
+				printf(" ."); //dead
 			}
 		}
-		cout << endl;
+		printf("\n"); //printf vypisuje rychlejsie ako cout <<
 	}
 	
 }
@@ -180,6 +183,32 @@ bool Field::checkCell(int riadok, int stlpec) {
 	return true;
 }
 
+void Field::simulation() {
+	thread first (&Field::run, this);
+	thread second (&Field::stop, this);
+
+	first.join();
+	second.join();	
+}
+
+void Field::run() {
+	while (!input) {
+		system("CLS");
+		this->display();
+		this->nextGeneration();
+		Sleep(100);
+	}
+	this->input = false;	
+}
+
+void Field::stop () {
+	int a = 1;
+	cin >> a;
+	while (a != 0) {
+		cin >> a;
+	}
+	this->input = true;
+}
 
 Field::~Field()
 {

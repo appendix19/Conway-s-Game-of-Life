@@ -5,18 +5,19 @@
 #include "Field.h"
 
 Main::Main()
-{
+{	
 }
 
-int main() {
+int main (int argc, char *argv[]) {
 	
-	initHeapMonitor();
+	initHeapMonitor();	
 
 	Field* field = new Field (10, 10);         //ak sa nic nezada, deafultne sa vytvori prazdne pole s rozmermi 10x10
 
 	int input = 0;
 	string message;
 	while (true) {
+		system("CLS");
 		cout << "***************************************** " << endl;
 		cout << "         Conway's Game of Life" << endl;
 		cout << "***************************************** " << endl;
@@ -106,25 +107,30 @@ int main() {
 			cout << "***************************************** " << endl;
 			cout << "Please, select one of the options bellow: " << endl;
 			cout << "1.Forward Simulation" << endl;
-			cout << "2.Backward Simulation" << endl;
-			cout << "3.Stop Simulation" << endl;
+			cout << "2.Backward Simulation" << endl;			
 			cout << "0.Main Menu" << endl;
 			cout << "***************************************** " << endl;
 			field->display();
-			cout << "***************************************** " << endl;
-			field->nextGeneration();
-			field->display();
+			cout << "***************************************** " << endl;			
 			cout << "Your input: ";
 			cin >> input;
 			message.clear();
 			system("CLS");
 
 			switch (input) {
-			case 1: {
-			}
-			}
-			break;			
+			case 1: 
+				field->simulation ();
+				break;
 			case 0:
+				system("CLS");
+				break;
+			default:
+				message = "Invalid input.";
+				system("CLS");
+				break;
+			}	
+			break;
+		case 0:
 			exit(EXIT_SUCCESS);
 			break;
 		default:
@@ -138,7 +144,6 @@ int main() {
 
 	return 0;
 }
-
 
 Main::~Main()
 {

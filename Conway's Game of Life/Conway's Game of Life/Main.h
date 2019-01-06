@@ -4,7 +4,7 @@
 using namespace std;
 
 class Main
-{
+{	
 public:
 	int main();
 	Main();

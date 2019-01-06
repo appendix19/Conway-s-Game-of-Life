@@ -12,6 +12,7 @@ private:
 	vector <int>* pattern; //vector zivych buniek, reprezentujuci sucasny vzor pola
 	int x;				  //pocet stlpcov
 	int y;			      //pocet riadkov
+	bool input;
 
 	bool isInVector(int, int); //true ak bunka na zadanych suradniciach nie je ziva
 
@@ -24,6 +25,9 @@ public:
 	void display();                            //vypise momentalny stav pola
 	void manualInsert();                        //rucne vkladanie zivych buniek
 	bool checkCell(int riadok, int stlpec);
+	void simulation();
+	void run();                      //function for thread
+	void stop();                     //function for thread
 	Field (int, int);                  //konstruktor pre vytvorenie prazdneho pola
 	~Field ();
 };
