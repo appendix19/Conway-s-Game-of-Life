@@ -4,22 +4,20 @@
 #include <windows.h>
 
 
-Field::Field (int x, int y)
-{
+Field::Field (int x, int y) {
 	this->x = x;
 	this->y = y;
 	this->input = false;
-	this->pattern = new vector <int> ();
-	this->simulation = new vector <vector <int>*> ();
+	//this->pattern = new vector <int> ();
+	//this->simulation = new vector <vector <int>> ();
 }
 
-bool Field::isInVector(int riadok, int stlpec)
-{
+bool Field::isInVector (int riadok, int stlpec) {
 	int index;
 	if (stlpec != -1 && stlpec < this->y) {	
 		if (riadok != -1 && riadok < this->x) {
 			index = riadok * x + stlpec;
-			return (std::find(pattern->begin(), pattern->end(), index) != pattern->end());
+			return (std::find(pattern.begin(), pattern.end(), index) != pattern.end());
 		}		
 	}
 	return false;
@@ -34,7 +32,7 @@ void Field::setY(int y) {
 }
 
 void Field::clearPattern() {
-	this->pattern->clear();
+	this->pattern.clear();
 }
 
 
@@ -53,17 +51,16 @@ void Field::generateRandomPattern () {
 	//vector randomLiveCells sa prekonvertuje do vector pattern
 	for (int i = 0; i < x*y; i++) {
 		if (randomLiveCells [i] == 1) {
-			this->pattern->push_back(i);
+			this->pattern.push_back(i);
 		}
 	}	
 }
 
-void Field::nextGeneration()
-{
-	vector <int> *newGenerationAliveCells = new vector <int>();
-	*newGenerationAliveCells = *pattern;
+void Field::nextGeneration() {
+	vector <int> newGenerationAliveCells;// = new vector <int>();
+	newGenerationAliveCells = pattern;
 	
-	if (!this->pattern->empty()) {
+	if (!this->pattern.empty()) {
 		for (int i = 0; i < y; i++) {
 			for (int j = 0; j < x; j++) {
 
@@ -94,15 +91,15 @@ void Field::nextGeneration()
 				// Bunka zomiera - nedostatocna alebo prilis velka populacia
 				if (isCurrentCellAlive && (aliveNeighbours < 2 || aliveNeighbours > 3))
 				{
-					std::vector<int>::iterator position = std::find(newGenerationAliveCells->begin(), newGenerationAliveCells->end(), indexCell);
-					if (position != newGenerationAliveCells->end())
-						newGenerationAliveCells->erase(position);
+					std::vector<int>::iterator position = std::find(newGenerationAliveCells.begin(), newGenerationAliveCells.end(), indexCell);
+					if (position != newGenerationAliveCells.end())
+						newGenerationAliveCells.erase(position);
 				}
 
 				// Narodi sa nova bunka
 				else if (!isCurrentCellAlive && (aliveNeighbours == 3))
 				{
-					newGenerationAliveCells->push_back(indexCell);
+					newGenerationAliveCells.push_back(indexCell);
 				}
 
 				// Ostava rovnaka
@@ -115,8 +112,8 @@ void Field::nextGeneration()
 		}
 	}
 
-	*pattern = *newGenerationAliveCells;
-	delete newGenerationAliveCells;
+	pattern = newGenerationAliveCells;
+	//delete newGenerationAliveCells;
 
 }
 
@@ -127,7 +124,7 @@ void Field::display () {
 
 			int index = i * x + j;
 
-			if (std::find(pattern->begin(), pattern->end(), index) != pattern->end())
+			if (std::find (pattern.begin(), pattern.end(), index) != pattern.end())
 			{
 				printf (" o"); //live
 			}
@@ -169,16 +166,16 @@ void Field::manualInsert()
 		}
 	}
 	if (checkCell(riadok, stlpec)) {
-		this->pattern->push_back(this->y*(riadok - 1) + (stlpec - 1));
-		sort(this->pattern->begin(), this->pattern->end());
+		this->pattern.push_back(this->y*(riadok - 1) + (stlpec - 1));
+		sort(this->pattern.begin(), this->pattern.end());
 	}
 
 }
 
 bool Field::checkCell (int riadok, int stlpec) {
 	int cell = this->y*(riadok - 1) + (stlpec - 1);
-	for (int i = 0; i < this->pattern->size(); i++) {
-		if (this->pattern->at(i) == cell) {
+	for (int i = 0; i < this->pattern.size(); i++) {
+		if (this->pattern.at(i) == cell) {
 			return false;
 		}
 	}
@@ -201,34 +198,34 @@ void Field::backwardSimulation () {
 	second.join();
 }
 
-void Field::runBackward() {
+void Field::runBackward() {	
+	this->input = false;
 	while (!input) {
 		system("CLS");
 		this->display();		
-		if (this->simulation->empty()) {
+		if (this->simulation.empty()) {
 			this->input = true;
-			cout << "KONIEC" << endl;
+			cout << "KONIEC" << endl;			
 		}
 		else {
-			this->pattern = this->simulation->back();
-			this->simulation->pop_back();
+			this->pattern = this->simulation.back();
+			this->simulation.pop_back();
 			Sleep (50);
 		}
-	}
-	this->input = false;
+	}		
 }
 
-void Field::runForward () {
+void Field::runForward () {	
+	this->input = false;
 	while (!input) {
 		system("CLS");
 		this->display();
-		if (!this->pattern->empty()) {			
-			this->simulation->push_back (this->pattern);
+		if (!this->pattern.empty()) {			
+			this->simulation.push_back (this->pattern);
 		}
 		this->nextGeneration ();
 		Sleep (50);
-	}
-	this->input = false;	
+	}			
 }
 
 void Field::stop () {
@@ -239,6 +236,6 @@ void Field::stop () {
 
 Field::~Field()
 {
-	delete pattern;
-	delete simulation;
+	//delete pattern;
+	//delete simulation;
 }

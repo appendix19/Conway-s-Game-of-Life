@@ -9,8 +9,8 @@ using namespace std;
 class Field
 {
 private:
-	vector <int>* pattern;                 //vector zivych buniek, reprezentujuci sucasny vzor pola
-	vector <vector <int>*>* simulation;    //vector vsetkych vektorov zo simulacie (potrebny pre spatnu simulaciu)
+	vector <int> pattern;                 //vector zivych buniek, reprezentujuci sucasny vzor pola
+	vector <vector <int>> simulation;    //vector vsetkych vektorov zo simulacie (potrebny pre spatnu simulaciu)
 	int x;				                   //pocet stlpcov
 	int y;			                       //pocet riadkov
 	bool input;

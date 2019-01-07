@@ -1,4 +1,7 @@
 ﻿  Field.cpp
-c:\users\appendix\desktop\conway's game of life\conway's game of life\field.cpp(45): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
+c:\users\appendix\desktop\conway's game of life\conway's game of life\field.cpp(43): warning C4244: 'argument': conversion from 'time_t' to 'unsigned int', possible loss of data
+  Generating Code...
+  Skipping... (no relevant changes detected)
+  Main.cpp
   Conway's Game of Life.vcxproj -> C:\Users\Appendix\Desktop\Conway's Game of Life\x64\Debug\Conway's Game of Life.exe
   Conway's Game of Life.vcxproj -> C:\Users\Appendix\Desktop\Conway's Game of Life\x64\Debug\Conway's Game of Life.pdb (Partial PDB)
