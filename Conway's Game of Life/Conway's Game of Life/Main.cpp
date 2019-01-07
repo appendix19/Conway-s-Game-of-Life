@@ -131,7 +131,7 @@ int main (int argc, char *argv[]) {
 				message = "Invalid input.";
 				system("CLS");
 				break;
-			}	
+			}
 			break;
 		case 0:
 			exit(EXIT_SUCCESS);

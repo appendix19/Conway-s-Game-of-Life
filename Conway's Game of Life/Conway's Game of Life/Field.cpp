@@ -8,8 +8,6 @@ Field::Field (int x, int y) {
 	this->x = x;
 	this->y = y;
 	this->input = false;
-	//this->pattern = new vector <int> ();
-	//this->simulation = new vector <vector <int>> ();
 }
 
 bool Field::isInVector (int riadok, int stlpec) {
@@ -31,8 +29,9 @@ void Field::setY(int y) {
 	this->y = y;
 }
 
-void Field::clearPattern() {
-	this->pattern.clear();
+void Field::clearPattern () {
+	this->pattern.clear ();
+	this->simulation.clear ();
 }
 
 
@@ -54,10 +53,12 @@ void Field::generateRandomPattern () {
 			this->pattern.push_back(i);
 		}
 	}	
+
+	this->simulation.clear ();      //celkova simulacia sa resetuje, pretoze vznikol novy vzor
 }
 
 void Field::nextGeneration() {
-	vector <int> newGenerationAliveCells;// = new vector <int>();
+	vector <int> newGenerationAliveCells;
 	newGenerationAliveCells = pattern;
 	
 	if (!this->pattern.empty()) {
@@ -111,10 +112,7 @@ void Field::nextGeneration() {
 			}
 		}
 	}
-
-	pattern = newGenerationAliveCells;
-	//delete newGenerationAliveCells;
-
+	pattern = newGenerationAliveCells;	
 }
 
 void Field::display () {
@@ -169,7 +167,7 @@ void Field::manualInsert()
 		this->pattern.push_back(this->y*(riadok - 1) + (stlpec - 1));
 		sort(this->pattern.begin(), this->pattern.end());
 	}
-
+	this->simulation.clear();      //celkova simulacia sa resetuje, pretoze vznikol novy vzor
 }
 
 bool Field::checkCell (int riadok, int stlpec) {
@@ -205,7 +203,8 @@ void Field::runBackward() {
 		this->display();		
 		if (this->simulation.empty()) {
 			this->input = true;
-			cout << "KONIEC" << endl;			
+			cout << "Backward simulation has finished." << endl;		
+			cout << "Please, run forward simulation first." << endl;
 		}
 		else {
 			this->pattern = this->simulation.back();
@@ -235,7 +234,5 @@ void Field::stop () {
 }
 
 Field::~Field()
-{
-	//delete pattern;
-	//delete simulation;
+{	
 }
