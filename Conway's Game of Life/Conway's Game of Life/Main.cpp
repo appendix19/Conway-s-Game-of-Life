@@ -125,10 +125,10 @@ int main() {
 				sin >> index;
 				field->addCell(index);
 			}
-
+			field->removeLast();
 			cin.rdbuf(cinbuf);
-
 			message = "Pattern was successfully loaded.";
+					
 			break;
 		}
 		case 5:
@@ -156,8 +156,8 @@ int main() {
 			cout << "0.Main Menu" << endl;
 			cout << "To stop simulation, press any key." << endl;
 			cout << "***************************************** " << endl;
-			field->display();
-			cout << "***************************************** " << endl;
+			field->display();			
+			cout << "***************************************** " << endl;				
 			cout << "Your input: ";
 
 			cin >> input;

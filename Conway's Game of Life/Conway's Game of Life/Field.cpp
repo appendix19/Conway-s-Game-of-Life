@@ -7,6 +7,7 @@
 #include "heap_monitor.h"
 #include <windows.h>
 #include <thread>
+#include <mutex>
 
 #ifdef _WIN32
 #define CLEAR "cls"
@@ -15,24 +16,27 @@
 #endif
 
 Field::Field (int x, int y)
+	:bufferMax (10)
 {
 	this->x = x;
 	this->y = y;
 	this->pattern = new vector<int>();
 	this->simulation = new vector<vector<int>*>();
-	this->input = false;
+	this->input = false;	
+	this->bufferCur = 0;
+	this->bufferQ = (int*) malloc(bufferMax*sizeof(int));
 }
 
 bool Field::isInVector(int riadok, int stlpec)
 {
 	int index;
 	if (stlpec != -1 && stlpec < this->y) {
+
 		if (riadok != -1 && riadok < this->x) {
-			index = riadok * x + stlpec;
+			index = riadok * this->y + stlpec;
 			return (std::find(pattern->begin(), pattern->end(), index) != pattern->end());
 		}
 	}
-
 	return false;
 }
 
@@ -106,27 +110,49 @@ void Field::clearSimulation()
 	this->simulation->clear();
 }
 
+void Field::generateRandomNumber() { //producent
+	int randomLiveCell = 0;	
+	srand(time(0));
+
+	for (int i = 0; i < x*y; i++) {		
+		randomLiveCell = rand() % 2;
+		std::unique_lock <std::mutex> lk (this->mutex);
+		if (this->bufferCur == this->bufferMax) {
+			notFull.wait (lk);
+		}
+		this->bufferCur++;
+		this->bufferQ [this->bufferCur] = randomLiveCell;				
+		lk.unlock ();
+		notEmpty.notify_one();		
+	}
+}
+
+void Field::convertArrayToPattern() {	//konzument
+	for (int i = 0; i < x*y; i++) {		
+		std::unique_lock <std::mutex> lk(this->mutex);
+		if (this->bufferCur == -1) {
+			notEmpty.wait(lk);
+		}
+		if (this->bufferQ [this->bufferCur] == 1) {
+			this->pattern->push_back(i);
+			this->bufferCur--;
+		}
+		else {
+			this->bufferCur--;
+		}
+		lk.unlock ();
+		notFull.notify_one();
+	}
+}
 
 void Field::generateRandomPattern () {
+	thread first(&Field::generateRandomNumber, this);
+	thread second(&Field::convertArrayToPattern, this);
 
-	int randomLiveCell = 0;
-	vector <int> randomLiveCells;
-	srand (time (0));
+	first.join();
+	second.join();
 	
-	//do randomLiveCells sa vygeneruju nahodne 0 a 1
-	for (int i = 0; i < x*y; i++) {
-		randomLiveCell = rand () % 2;
-		randomLiveCells.push_back (randomLiveCell);		
-	}
-
-	//vector randomLiveCells sa prekonvertuje do vector pattern
-	for (int i = 0; i < x*y; i++) {
-		if (randomLiveCells [i] == 1) {
-			this->pattern->push_back (i);			
-		}
-	}
 	this->clearSimulation(); //celkova simulacia sa resetuje, pretoze vznikol novy vzor
-
 }
 
 void Field::nextGeneration()
@@ -136,8 +162,8 @@ void Field::nextGeneration()
 
 
 	if (!this->pattern->empty()) {
-		for (int i = 0; i < y; i++) {
-			for (int j = 0; j < x; j++) {
+		for (int i = 0; i < this->x; i++) {
+			for (int j = 0; j < this->y; j++) {
 
 				int aliveNeighbours = 0;
 				int index = 0;
@@ -158,7 +184,7 @@ void Field::nextGeneration()
 				if (isCurrentCellAlive)
 				aliveNeighbours--;
 
-				int indexCell = i * x + j;
+				int indexCell = i * this->y + j;
 
 			
 
@@ -187,10 +213,10 @@ void Field::nextGeneration()
 
 void Field::display () {
 	
-	for (int i = 0; i < y; i++) {
-		for (int j = 0; j < x; j++) {
+	for (int i = 0; i < this->x; i++) {
+		for (int j = 0; j < this->y; j++) {
 
-			int index = i * x + j;
+			int index = i * this->y + j;
 
 			if (std::find(pattern->begin(), pattern->end(), index) != pattern->end())
 			{
@@ -263,9 +289,13 @@ void Field::patternToFile()
 
 void Field::addCell(int index)
 {
-	pattern->push_back(index);
+	pattern->push_back(index);	
 }
 
+
+void Field::removeLast() {
+	this->pattern->pop_back();
+}
 
 void Field::stop()
 {
@@ -298,6 +328,7 @@ void Field::backwardSimulation()
 Field::~Field()
 {
 	clear();
+	free ((void*)this->bufferQ);
 	delete pattern;
 	delete simulation;
 }
